@@ -15,6 +15,11 @@ interface Alvo {
   link: string;
 }
 
+interface Vuln {
+  id: string;
+  vulnera: string;
+}
+
 const styles = StyleSheet.create({
   page: {
     padding: 30,
@@ -33,13 +38,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   row: {
-    flexDirection: "row", // Substitui display: "table"
+    flexDirection: "row",
     borderBottomWidth: 1,
     borderBottomColor: "#000",
     borderStyle: "solid",
   },
   cell: {
-    flex: 1, // Garante que as células tenham largura igual
+    flex: 1,
     padding: 5,
     fontSize: 10,
     borderRightWidth: 1,
@@ -51,7 +56,7 @@ const styles = StyleSheet.create({
     padding: 5,
     fontSize: 10,
     fontWeight: "bold",
-    backgroundColor: "#ef4444", // Fundo cinza para cabeçalho
+    backgroundColor: "#ef4444",
     borderRightWidth: 1,
     borderRightColor: "#000",
     borderStyle: "solid",
@@ -61,26 +66,24 @@ const styles = StyleSheet.create({
     padding: 5,
     fontSize: 10,
     fontWeight: "bold",
-    backgroundColor: "#3b82f6", // Fundo cinza para cabeçalho
+    backgroundColor: "#3b82f6",
     borderRightWidth: 1,
     borderRightColor: "#000",
     borderStyle: "solid",
   },
 });
 
-const ReportPDF = ({ alvos }: { alvos: Alvo[] }) => (
+const ReportPDF = ({ alvos, vulns }: { alvos: Alvo[]; vulns: Vuln[] }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.section}>
         <Text style={styles.header}>Escopo do Pentest</Text>
-        {/* Tabela */}
+        {/* Tabela de Alvos */}
         <View style={styles.table}>
-          {/* Cabeçalho da tabela */}
           <View style={styles.row}>
             <Text style={styles.headerAlvo}>ALVO</Text>
             <Text style={styles.headerLink}>LINK/LOGIN/SENHA</Text>
           </View>
-          {/* Linhas da tabela */}
           {alvos.map((alvo, index) => (
             <View key={alvo.id} style={styles.row}>
               <Text style={styles.cell}>
@@ -90,6 +93,25 @@ const ReportPDF = ({ alvos }: { alvos: Alvo[] }) => (
             </View>
           ))}
         </View>
+
+        {/* Tabela de Vulnerabilidades */}
+        <View style={{ marginTop: 20 }}>
+          <Text style={styles.header}>Tipos de Vulnerabilidades</Text>
+          <View style={styles.table}>
+            <View style={styles.row}>
+              <Text style={styles.headerAlvo}>ID</Text>
+              <Text style={styles.headerLink}>VULNERABILIDADE</Text>
+            </View>
+            {vulns.map((vuln, index) => (
+              <View key={vuln.id} style={styles.row}>
+                <Text style={styles.cell}>
+                  {String(index + 1).padStart(2, "0")}
+                </Text>
+                <Text style={styles.cell}>{vuln.vulnera}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
       </View>
     </Page>
   </Document>
@@ -98,6 +120,8 @@ const ReportPDF = ({ alvos }: { alvos: Alvo[] }) => (
 export default function Report() {
   const [alvos, setAlvos] = useState<Alvo[]>([]);
   const [novoAlvo, setNovoAlvo] = useState<string>("");
+  const [vulns, setVulns] = useState<Vuln[]>([]);
+  const [novaVulns, setNovaVulns] = useState<string>("");
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -122,6 +146,15 @@ export default function Report() {
     }
   };
 
+  const adicionarVuln = () => {
+    if (novaVulns.trim() !== "") {
+      setVulns([...vulns, { id: uuidv4(), vulnera: novaVulns }]);
+      setNovaVulns("");
+    } else {
+      alert("Por favor, insira uma vulnerabilidade válida.");
+    }
+  };
+
   if (!isClient) {
     return null;
   }
@@ -135,7 +168,7 @@ export default function Report() {
           value={novoAlvo}
           onChange={(e) => setNovoAlvo(e.target.value)}
           placeholder="Insira o link do alvo"
-          className="border p-2 flex-1"
+          className="border p-2 flex-1 text-black"
         />
         <button
           onClick={adicionarAlvo}
@@ -164,9 +197,47 @@ export default function Report() {
           ))}
         </tbody>
       </table>
+
+      <h1 className="text-2xl font-bold mb-4">Tipos de Vulnerabilidades</h1>
+      <div className="flex gap-2 my-4">
+        <input
+          type="text"
+          value={novaVulns}
+          onChange={(e) => setNovaVulns(e.target.value)}
+          placeholder="Insira a vulnerabilidade"
+          className="border p-2 flex-1 text-black"
+        />
+        <button
+          onClick={adicionarVuln}
+          className="bg-blue-500 text-white px-4 py-2"
+        >
+          Adicionar
+        </button>
+      </div>
+      <table className="w-full border-collapse border border-gray-300">
+        <thead>
+          <tr className="bg-red-500 text-white">
+            <th className="border border-gray-300 p-2">ID</th>
+            <th className="border bg-blue-500 border-gray-300 p-2">
+              VULNERABILIDADE
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {vulns.map((vuln, index) => (
+            <tr key={vuln.id} className="border border-gray-300">
+              <td className="border border-gray-300 p-2">
+                {String(index + 1).padStart(2, "0")}
+              </td>
+              <td className="border border-gray-300 p-2">{vuln.vulnera}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
       <div className="mt-4">
         <PDFDownloadLink
-          document={<ReportPDF alvos={alvos} />}
+          document={<ReportPDF alvos={alvos} vulns={vulns} />}
           fileName="pentest_report.pdf"
         >
           {({ loading }) => (
