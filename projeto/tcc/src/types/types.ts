@@ -6,4 +6,5 @@ export interface Alvo {
 export interface VulnType {
   id: string;
   vulnera: string;
+  severidade: string;
 }
