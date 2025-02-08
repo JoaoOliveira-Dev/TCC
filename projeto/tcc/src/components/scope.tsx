@@ -3,6 +3,26 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { isValidUrl } from "../utils/helpers";
 import { Alvo } from "../types/types";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "src/components/ui/card";
+import { Input } from "src/components/ui/input";
+import { Button } from "src/components/ui/button";
+import { Label } from "src/components/ui/label";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "src/components/ui/table";
 
 interface ScopeProps {
   alvos: Alvo[];
@@ -22,45 +42,72 @@ export default function Scope({ alvos, setAlvos }: ScopeProps) {
   };
 
   return (
-    <div className="p-8 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Escopo do Pentest</h1>
-      {/* Formulário para adicionar alvos */}
-      <div className="flex gap-2 my-4">
-        <input
-          type="text"
-          value={novoAlvo}
-          onChange={(e) => setNovoAlvo(e.target.value)}
-          placeholder="Insira o link do alvo"
-          className="border p-2 flex-1 text-black"
-        />
-        <button
-          onClick={adicionarAlvo}
-          className="bg-blue-500 text-white px-4 py-2"
-        >
-          Adicionar
-        </button>
-      </div>
+    <>
+      <CardHeader>
+        <CardTitle>Escopo do Pentest</CardTitle>
+        <CardDescription>
+          Adicione os links dos alvos que serão testados.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form className="grid w-full items-center gap-4">
+          <div className="flex flex-col space-y-1.5">
+            <Label htmlFor="link">Link do Alvo</Label>
+            <Input
+              id="link"
+              placeholder="Insira o link do alvo"
+              value={novoAlvo}
+              onChange={(e) => setNovoAlvo(e.target.value)}
+            />
+          </div>
+        </form>
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        <Button variant="outline" onClick={() => setNovoAlvo("")}>
+          Limpar
+        </Button>
+        <Button onClick={adicionarAlvo}>Adicionar</Button>
+      </CardFooter>
+
       {/* Tabela de alvos */}
-      <table className="w-full border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-red-500 text-white">
-            <th className="border border-gray-300 p-2">ALVO</th>
-            <th className="border bg-blue-500 border-gray-300 p-2">
-              LINK/LOGIN/SENHA
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {alvos.map((alvo, index) => (
-            <tr key={alvo.id} className="border border-gray-300">
-              <td className="border border-gray-300 p-2">
-                {String(index + 1).padStart(2, "0")}
-              </td>
-              <td className="border border-gray-300 p-2">{alvo.link}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+      <Table className="mt-6">
+        <TableCaption>Lista de alvos adicionados.</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[100px] text-center">#</TableHead>
+            <TableHead>Link do Alvo</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {alvos.length > 0 ? (
+            alvos.map((alvo, index) => (
+              <TableRow key={alvo.id}>
+                <TableCell className="text-center font-medium">
+                  {String(index + 1).padStart(2, "0")}
+                </TableCell>
+                <TableCell>{alvo.link}</TableCell>
+                <TableCell className="text-center">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setAlvos(alvos.filter((item) => item.id !== alvo.id))
+                    }
+                  >
+                    Remover
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={2} className="text-center">
+                Nenhum alvo adicionado.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </>
   );
 }

@@ -1,65 +1,164 @@
 "use client";
-import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { VulnType } from "../types/types";
+import * as React from "react";
+import { Check, ChevronsUpDown, Plus } from "lucide-react";
+import { cn } from "src/lib/utils";
+import { Button } from "src/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "src/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "src/components/ui/popover";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "src/components/ui/card";
+import { Input } from "src/components/ui/input";
+import { Label } from "src/components/ui/label";
+import { Textarea } from "src/components/ui/textarea";
 
-interface VulnProps {
-  vulns: VulnType[];
-  setVulns: React.Dispatch<React.SetStateAction<VulnType[]>>;
-}
+import { vulnerabilidadesIniciais } from "../utils/vulns";
 
-export default function Vuln({ vulns, setVulns }: VulnProps) {
-  const [novaVuln, setNovaVuln] = useState<string>("");
+export default function Vuln() {
+  const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState("");
+  const [vulnerabilidades, setVulnerabilidades] = React.useState(
+    vulnerabilidadesIniciais
+  );
+  const [descVuln, setDescVuln] = React.useState("");
+  const [referencia, setReferencia] = React.useState("");
 
-  const adicionarVuln = () => {
+  // Estado para controlar a nova vulnerabilidade sendo criada
+  const [novaVuln, setNovaVuln] = React.useState("");
+
+  // Função para adicionar uma nova vulnerabilidade
+  const adicionarNovaVuln = () => {
     if (novaVuln.trim() !== "") {
-      setVulns([...vulns, { id: uuidv4(), vulnera: novaVuln }]);
-      setNovaVuln("");
-    } else {
-      alert("Por favor, insira uma vulnerabilidade válida.");
+      const novaVulnerabilidade = {
+        value: novaVuln,
+        label: novaVuln,
+      };
+      setVulnerabilidades([...vulnerabilidades, novaVulnerabilidade]);
+      setValue(novaVuln); // Define a nova vulnerabilidade como selecionada
+      setNovaVuln(""); // Limpa o campo de entrada
+      setOpen(false); // Fecha o popover
     }
   };
 
   return (
-    <div className="p-8 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Tipos de Vulnerabilidades</h1>
-      {/* Formulário para adicionar vulnerabilidades */}
-      <div className="flex gap-2 my-4">
-        <input
-          type="text"
-          value={novaVuln}
-          onChange={(e) => setNovaVuln(e.target.value)}
-          placeholder="Insira a vulnerabilidade"
-          className="border p-2 flex-1 text-black"
-        />
-        <button
-          onClick={adicionarVuln}
-          className="bg-blue-500 text-white px-4 py-2"
-        >
-          Adicionar
-        </button>
-      </div>
-      {/* Tabela de vulnerabilidades */}
-      <table className="w-full border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-red-500 text-white">
-            <th className="border border-gray-300 p-2">ID</th>
-            <th className="border bg-blue-500 border-gray-300 p-2">
-              VULNERABILIDADE
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {vulns.map((vuln, index) => (
-            <tr key={vuln.id} className="border border-gray-300">
-              <td className="border border-gray-300 p-2">
-                {String(index + 1).padStart(2, "0")}
-              </td>
-              <td className="border border-gray-300 p-2">{vuln.vulnera}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <>
+      <CardHeader>
+        <CardTitle>Vulnerabilidades</CardTitle>
+        <CardDescription>
+          Selecione ou crie novas vulnerabilidades encontradas.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={open}
+              className="w-[300px] justify-between"
+            >
+              {value
+                ? vulnerabilidades.find(
+                    (vulnerabilidade) => vulnerabilidade.value === value
+                  )?.label
+                : "Lista de Vulns..."}
+              <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[300px] p-0">
+            <Command>
+              <CommandInput placeholder="Procure a vulnerabilidade" />
+              <CommandList>
+                <CommandEmpty>
+                  <div className="p-2">
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Nenhuma vulnerabilidade encontrada.
+                    </p>
+                    <div className="flex items-center space-x-2">
+                      <Input
+                        type="text"
+                        value={novaVuln}
+                        onChange={(e) => setNovaVuln(e.target.value)}
+                        placeholder="Digite uma nova vulnerabilidade"
+                        className="flex-1 px-2 py-1 border rounded-md text-sm"
+                      />
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={adicionarNovaVuln}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </CommandEmpty>
+                <CommandGroup>
+                  {vulnerabilidades.map((vulnerabilidade) => (
+                    <CommandItem
+                      key={vulnerabilidade.value}
+                      value={vulnerabilidade.value}
+                      onSelect={(currentValue) => {
+                        setValue(currentValue === value ? "" : currentValue);
+                        setOpen(false);
+                        setDescVuln(vulnerabilidade.desc || "");
+                        setReferencia(vulnerabilidade.referencia || "");
+                      }}
+                    >
+                      {vulnerabilidade.label}
+                      <Check
+                        className={cn(
+                          "ml-auto",
+                          value === vulnerabilidade.value
+                            ? "opacity-100"
+                            : "opacity-0"
+                        )}
+                      />
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
+        {value && (
+          <form className="grid w-full items-center gap-4 mt-5">
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="link">Descrição da vulnerabilidade</Label>
+              <Textarea
+                id="link"
+                placeholder="Anote a DESCRIÇÃO da vulnerabilidade"
+                value={descVuln}
+                onChange={(e) => setDescVuln(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="link">Referência</Label>
+              <Textarea
+                id="referencia"
+                placeholder="Anote as REFERÊNCIAS da vulnerabilidade"
+                value={referencia}
+                onChange={(e) => setReferencia(e.target.value)}
+              />
+            </div>
+          </form>
+        )}
+      </CardContent>
+    </>
   );
 }

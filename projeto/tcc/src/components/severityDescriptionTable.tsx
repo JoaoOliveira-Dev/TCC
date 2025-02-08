@@ -1,39 +1,5 @@
-import { View, Text, StyleSheet } from "@react-pdf/renderer";
-import colors from "src/utils/colors";
-
-const styles = StyleSheet.create({
-  table: {
-    width: "100%",
-    marginTop: 10,
-  },
-  row: {
-    flexDirection: "row",
-  },
-  cellSeverity: {
-    flex: 1,
-    padding: 5,
-    fontSize: 10,
-  },
-  cellDesc: {
-    flex: 4,
-    padding: 5,
-    fontSize: 10,
-  },
-  headerGravidade: {
-    flex: 1,
-    padding: 5,
-    fontSize: 10,
-    fontWeight: "bold",
-    backgroundColor: colors.red,
-  },
-  headerDescricao: {
-    flex: 4, // Aumenta o tamanho da coluna de descrição
-    padding: 5,
-    fontSize: 10,
-    fontWeight: "bold",
-    backgroundColor: colors.b_blue,
-  },
-});
+import { View, Text } from "@react-pdf/renderer";
+import { styles } from "src/utils/s_severityDesc";
 
 const severityDescriptions = [
   {
@@ -64,22 +30,29 @@ const severityDescriptions = [
 ];
 
 const SeverityDescriptionsTable = () => (
-  <View style={styles.table}>
-    <Text style={{ fontSize: 8, marginBottom: 10 }}>
-      Cada vulnerabilidade ou risco identicado foi classicado como uma
-      descoberta e categorizado nas seguintes categorias: Risco Crítico, Alto,
-      Médio, Baixo ou Informacional, conforme as denições a seguir:
-    </Text>
-    <View style={styles.row}>
-      <Text style={styles.headerGravidade}>GRAVIDADE</Text>
-      <Text style={styles.headerDescricao}>DESCRIÇÃO</Text>
-    </View>
-    {severityDescriptions.map((description) => (
-      <View key={description.severity} style={styles.row}>
-        <Text style={styles.cellSeverity}>{description.severity}</Text>
-        <Text style={styles.cellDesc}>{description.description}</Text>
+  <View style={styles.tableContainer}>
+    <View style={styles.table}>
+      <Text
+        style={{
+          fontSize: 8,
+          marginBottom: 10,
+        }}
+      >
+        Cada vulnerabilidade ou risco identicado foi classicado como uma
+        descoberta e categorizado nas seguintes categorias: Risco Crítico, Alto,
+        Médio, Baixo ou Informacional, conforme as denições a seguir:
+      </Text>
+      <View style={styles.row}>
+        <Text style={styles.headerGravidade}>GRAVIDADE</Text>
+        <Text style={styles.headerDescricao}>DESCRIÇÃO</Text>
       </View>
-    ))}
+      {severityDescriptions.map((description) => (
+        <View key={description.severity} style={styles.rows}>
+          <Text style={styles.cellSeverity}>{description.severity}</Text>
+          <Text style={styles.cellDesc}>{description.description}</Text>
+        </View>
+      ))}
+    </View>
   </View>
 );
 

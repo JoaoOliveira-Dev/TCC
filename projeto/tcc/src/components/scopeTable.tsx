@@ -1,52 +1,40 @@
 import { View, Text, StyleSheet } from "@react-pdf/renderer";
 import colors from "src/utils/colors";
+
 import { Alvo } from "../types/types";
 
-const styles = StyleSheet.create({
-  table: {
-    width: "100%",
-    marginTop: 10,
-  },
-  row: {
-    flexDirection: "row",
-  },
-  cell: {
-    flex: 1,
-    padding: 5,
-    fontSize: 10,
-  },
-  headerAlvo: {
-    flex: 1,
-    padding: 5,
-    fontSize: 10,
-    fontWeight: "bold",
-    backgroundColor: colors.red,
-  },
-  headerLink: {
-    flex: 1,
-    padding: 5,
-    fontSize: 10,
-    fontWeight: "bold",
-    backgroundColor: colors.b_blue,
-  },
-});
+import { styles } from "src/utils/s_scopeTable";
 
 interface ScopeTableProps {
   alvos: Alvo[];
 }
 
 const ScopeTable = ({ alvos }: ScopeTableProps) => (
-  <View style={styles.table}>
-    <View style={styles.row}>
-      <Text style={styles.headerAlvo}>ALVO</Text>
-      <Text style={styles.headerLink}>LINK/LOGIN/SENHA</Text>
+  <View style={styles.tableContainer}>
+    {/* Adicionando o texto "ESCOPO" */}
+    <View
+      style={{
+        flexDirection: "row",
+        justifyContent: "flex-end",
+        width: "100%",
+      }}
+    >
+      <Text style={styles.escopo}>ESCOPO</Text>
     </View>
-    {alvos.map((alvo, index) => (
-      <View key={alvo.id} style={styles.row}>
-        <Text style={styles.cell}>{String(index + 1).padStart(2, "0")}</Text>
-        <Text style={styles.cell}>{alvo.link}</Text>
+    <View style={styles.table}>
+      {/* Cabeçalho da tabela */}
+      <View style={styles.row}>
+        <Text style={styles.headerAlvo}>ALVO</Text>
+        <Text style={styles.headerLink}>LINK/LOGIN/SENHA</Text>
       </View>
-    ))}
+      {/* Linhas da tabela */}
+      {alvos.map((alvo, index) => (
+        <View key={alvo.id} style={styles.rows}>
+          <Text style={styles.cell1}>{String(index + 1).padStart(2, "0")}</Text>
+          <Text style={styles.cell2}>{alvo.link}</Text>
+        </View>
+      ))}
+    </View>
   </View>
 );
 
