@@ -1,60 +1,61 @@
 import { View, Text, StyleSheet } from "@react-pdf/renderer";
 import { VulnType } from "../types/types";
+import { styles } from "src/utils/s_vulns";
 
-const styles = StyleSheet.create({
-  section: {
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 14,
-    fontWeight: "bold",
-    marginTop: 10,
-  },
-  subtitle: {
-    fontSize: 12,
-    fontWeight: "bold",
-    color: "#3b82f6",
-    marginTop: 5,
-  },
-  table: {
-    width: "100%",
-    marginTop: 10,
-  },
-  row: {
-    flexDirection: "row",
-    borderBottomWidth: 1,
-    borderBottomColor: "#000",
-    borderStyle: "solid",
-  },
-  cell: {
-    flex: 1,
-    padding: 5,
-    fontSize: 10,
-    borderRightWidth: 1,
-    borderRightColor: "#000",
-    borderStyle: "solid",
-  },
-  headerID: {
-    flex: 1,
-    padding: 5,
-    fontSize: 10,
-    fontWeight: "bold",
-    backgroundColor: "#ef4444",
-    borderRightWidth: 1,
-    borderRightColor: "#000",
-    borderStyle: "solid",
-  },
-  headerVuln: {
-    flex: 1,
-    padding: 5,
-    fontSize: 10,
-    fontWeight: "bold",
-    backgroundColor: "#3b82f6",
-    borderRightWidth: 1,
-    borderRightColor: "#000",
-    borderStyle: "solid",
-  },
-});
+// const styles = StyleSheet.create({
+//   section: {
+//     marginBottom: 20,
+//   },
+//   title: {
+//     fontSize: 14,
+//     fontWeight: "bold",
+//     marginTop: 10,
+//   },
+//   subtitle: {
+//     fontSize: 12,
+//     fontWeight: "bold",
+//     color: "#3b82f6",
+//     marginTop: 5,
+//   },
+//   table: {
+//     width: "100%",
+//     marginTop: 10,
+//   },
+//   row: {
+//     flexDirection: "row",
+//     borderBottomWidth: 1,
+//     borderBottomColor: "#000",
+//     borderStyle: "solid",
+//   },
+//   cell: {
+//     flex: 1,
+//     padding: 5,
+//     fontSize: 10,
+//     borderRightWidth: 1,
+//     borderRightColor: "#000",
+//     borderStyle: "solid",
+//   },
+//   headerID: {
+//     flex: 1,
+//     padding: 5,
+//     fontSize: 10,
+//     fontWeight: "bold",
+//     backgroundColor: "#ef4444",
+//     borderRightWidth: 1,
+//     borderRightColor: "#000",
+//     borderStyle: "solid",
+//   },
+//   headerVuln: {
+//     flex: 1,
+//     padding: 5,
+//     fontSize: 10,
+//     fontWeight: "bold",
+//     backgroundColor: "#3b82f6",
+//     borderRightWidth: 1,
+//     borderRightColor: "#000",
+//     borderStyle: "solid",
+//   },
+// });
 
 interface VulnTableProps {
   vulns: VulnType[];
@@ -63,38 +64,32 @@ interface VulnTableProps {
 const VulnTable = ({ vulns }: VulnTableProps) => (
   <View>
     {vulns.map((vuln, index) => (
-      <View key={vuln.id || index} style={styles.section}>
+      <View key={vuln.id || index} style={styles.table}>
+        <Text style={{ fontSize: 12, marginBottom: 10 }}>
+          Vulnerabilidades Externas
+        </Text>
         <Text style={styles.title}>
           {index + 1}. {vuln.nome}
         </Text>
         <View style={styles.row}>
-          <View style={[styles.cell, { backgroundColor: "#3b82f6" }]}>
+          <View style={styles.headerGravidade}>
             <Text>{vuln.nome}</Text>
           </View>
-          <View style={[styles.cell, { backgroundColor: "#ef4444" }]}>
+          <View style={styles.headerQuantidade}>
             <Text>{vuln.severidade}</Text>
           </View>
         </View>
-        <View style={styles.row}>
-          <View style={styles.cell}>
-            <Text>
-              <strong>CVSS Points</strong>
-            </Text>
-          </View>
-          <View style={styles.cell}>
-            <Text>9.8</Text>
-          </View>
+        <View key="" style={styles.rows}>
+          <Text style={styles.cell1}>CVSS Points</Text>
+          <Text style={styles.cell2}>9.8</Text>
         </View>
-        <View style={styles.row}>
-          <View style={styles.cell}>
-            <Text>
-              <strong>Vetores</strong>
-            </Text>
-          </View>
-          <View style={styles.cell}>
-            <Text>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</Text>
-          </View>
+        <View key="" style={styles.rows}>
+          <Text style={styles.cell1}>Vetores</Text>
+          <Text style={styles.cell2}>
+            CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+          </Text>
         </View>
+
         <Text style={styles.subtitle}>Descrição da Vulnerabilidade:</Text>
         <Text>{vuln.descVuln}</Text>
         <Text style={styles.subtitle}>Ativo Afetado:</Text>

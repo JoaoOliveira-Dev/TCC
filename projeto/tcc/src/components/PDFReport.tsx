@@ -24,7 +24,6 @@ import path from "path";
 const styles = StyleSheet.create({
   page: {
     padding: 30,
-    fontFamily: "Rasa",
   },
   section: {
     marginBottom: 20,

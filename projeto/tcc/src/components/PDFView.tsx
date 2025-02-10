@@ -14,6 +14,7 @@ import ScopeTable from "./scopeTable";
 import VulnTable from "./vulnTable";
 import ResultsTable from "./resultsTable"; // Importe o novo componente
 import SeverityDescriptionsTable from "./severityDescriptionTable"; // Importe o novo componente
+import PDFReport from "./PDFReport";
 
 // Estilos para o PDF
 const styles = StyleSheet.create({
@@ -62,7 +63,7 @@ export default function PDFViewerExample({ alvos, vulns }: PDFReportProps) {
 
   // Função para gerar o PDF e criar uma URL
   const generatePDF = async () => {
-    const blob = await pdf(<MyDocument alvos={alvos} vulns={vulns} />).toBlob();
+    const blob = await pdf(<PDFReport alvos={alvos} vulns={vulns} />).toBlob();
     const url = URL.createObjectURL(blob);
     setPdfUrl(url);
 
