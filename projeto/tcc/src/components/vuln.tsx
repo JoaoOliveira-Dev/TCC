@@ -27,22 +27,40 @@ import {
 import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
 import { Textarea } from "src/components/ui/textarea";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "src/components/ui/select";
 import { vulnerabilidadesIniciais } from "../utils/vulns";
+import { v4 as uuidv4 } from "uuid"; // Importa a função para gerar IDs únicos
+import { VulnType } from "../types/types";
 
-export default function Vuln() {
+interface VulnProps {
+  onAddOrUpdateVulnerability: (vulnerability: VulnType) => void;
+}
+
+export default function Vuln({ onAddOrUpdateVulnerability }: VulnProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
   const [vulnerabilidades, setVulnerabilidades] = React.useState(
     vulnerabilidadesIniciais
   );
-  const [descVuln, setDescVuln] = React.useState("");
-  const [referencia, setReferencia] = React.useState("");
 
-  // Estado para controlar a nova vulnerabilidade sendo criada
+  // Estados para controlar as informações da vulnerabilidade selecionada
+  const [nome, setNome] = React.useState("");
+  const [descVuln, setDescVuln] = React.useState("");
+  const [ativos, setAtivos] = React.useState("");
+  const [referencia, setReferencia] = React.useState("");
+  const [impacto, setImpacto] = React.useState("");
+  const [reparo, setReparo] = React.useState("");
+  const [poc, setPoc] = React.useState("");
+  const [severidade, setSeveridade] = React.useState("Low");
   const [novaVuln, setNovaVuln] = React.useState("");
 
-  // Função para adicionar uma nova vulnerabilidade
+  // Função para adicionar uma nova vulnerabilidade à lista
   const adicionarNovaVuln = () => {
     if (novaVuln.trim() !== "") {
       const novaVulnerabilidade = {
@@ -50,10 +68,39 @@ export default function Vuln() {
         label: novaVuln,
       };
       setVulnerabilidades([...vulnerabilidades, novaVulnerabilidade]);
-      setValue(novaVuln); // Define a nova vulnerabilidade como selecionada
-      setNovaVuln(""); // Limpa o campo de entrada
-      setOpen(false); // Fecha o popover
+      setValue(novaVuln);
+      setNovaVuln("");
+      setOpen(false);
     }
+  };
+
+  // Função para salvar a vulnerabilidade atual
+  const saveVulnerability = (event: any) => {
+    //faça como que a página não recarregue
+    event.preventDefault();
+
+    const vulnerability: VulnType = {
+      id: uuidv4(),
+      nome,
+      descVuln,
+      ativos,
+      referencia,
+      impacto,
+      reparo,
+      poc,
+      severidade,
+    };
+    onAddOrUpdateVulnerability(vulnerability);
+
+    // Limpa os campos após salvar
+    setNome("");
+    setDescVuln("");
+    setAtivos("");
+    setReferencia("");
+    setImpacto("");
+    setReparo("");
+    setPoc("");
+    setSeveridade("Low");
   };
 
   return (
@@ -116,6 +163,7 @@ export default function Vuln() {
                       onSelect={(currentValue) => {
                         setValue(currentValue === value ? "" : currentValue);
                         setOpen(false);
+                        setNome(vulnerabilidade.value);
                         setDescVuln(vulnerabilidade.desc || "");
                         setReferencia(vulnerabilidade.referencia || "");
                       }}
@@ -148,6 +196,15 @@ export default function Vuln() {
               />
             </div>
             <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="link">Ativo afetado</Label>
+              <Textarea
+                id="referencia"
+                placeholder="Anote os ATIVOS da vulnerabilidade"
+                value={ativos}
+                onChange={(e) => setAtivos(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col space-y-1.5">
               <Label htmlFor="link">Referência</Label>
               <Textarea
                 id="referencia"
@@ -156,6 +213,49 @@ export default function Vuln() {
                 onChange={(e) => setReferencia(e.target.value)}
               />
             </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="link">Impacto</Label>
+              <Textarea
+                id="impacto"
+                placeholder="Anote os IMPACTOS da vulnerabilidade"
+                value={impacto}
+                onChange={(e) => setImpacto(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="link">Ação de reparo</Label>
+              <Textarea
+                id="reparo"
+                placeholder="Anote as AÇÕES DE REPARO da vulnerabilidade"
+                value={reparo}
+                onChange={(e) => setReparo(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="link">Proof Of Concept</Label>
+              <Textarea
+                id="poc"
+                placeholder="Anote as PROVAS DE CONCEITO da vulnerabilidade"
+                value={poc}
+                onChange={(e) => setPoc(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="severidade">Severidade</Label>
+              <Select value={severidade} onValueChange={setSeveridade}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione a severidade" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Critical">Critical</SelectItem>
+                  <SelectItem value="High">High</SelectItem>
+                  <SelectItem value="Medium">Medium</SelectItem>
+                  <SelectItem value="Low">Low</SelectItem>
+                  <SelectItem value="Info">Info</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Button onClick={saveVulnerability}>Salvar Vulnerabilidade</Button>
           </form>
         )}
       </CardContent>

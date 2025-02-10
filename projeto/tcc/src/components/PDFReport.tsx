@@ -1,15 +1,30 @@
-import { Document, Page, View, StyleSheet } from "@react-pdf/renderer";
+import { Document, Page, View, StyleSheet, Font } from "@react-pdf/renderer";
 import CoverPage from "./coverPage";
 import ScopeTable from "./scopeTable";
 import VulnTable from "./vulnTable";
 import ResultsTable from "./resultsTable"; // Importe o novo componente
 import SeverityDescriptionsTable from "./severityDescriptionTable"; // Importe o novo componente
 import { Alvo, VulnType } from "../types/types";
+import path from "path";
+
+// Registra a fonte Rasa
+// Font.register({
+//   family: "Rasa",
+//   fonts: [
+//     {
+//       src: "../lib/Rasa-Italic-VariableFont_wght.ttf", // Caminho relativo
+//     },
+//     {
+//       src: "../lib/Rasa-VariableFont_wght.ttf", // Caminho relativo
+//       fontStyle: "italic",
+//     },
+//   ],
+// });
 
 const styles = StyleSheet.create({
   page: {
     padding: 30,
-    fontFamily: "Helvetica",
+    fontFamily: "Rasa",
   },
   section: {
     marginBottom: 20,
@@ -38,6 +53,10 @@ const PDFReport = ({ alvos, vulns }: PDFReportProps) => (
       </View>
       <View style={styles.section}>
         <SeverityDescriptionsTable /> {/* Adicione o novo componente */}
+      </View>
+      <View style={styles.section}>
+        <h1>VULNERABILIDADES</h1>
+        <VulnTable vulns={vulns} /> {/* Adicione o novo componente */}
       </View>
     </Page>
   </Document>
