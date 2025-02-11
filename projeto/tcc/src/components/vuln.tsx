@@ -24,25 +24,31 @@ import {
   CardContent,
   CardFooter,
 } from "src/components/ui/card";
+import { FaRegTrashAlt } from "react-icons/fa";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "src/components/ui/table";
 import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
 import { Textarea } from "src/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "src/components/ui/select";
 import { vulnerabilidadesIniciais } from "../utils/vulns";
 import { v4 as uuidv4 } from "uuid"; // Importa a função para gerar IDs únicos
 import { VulnType } from "../types/types";
+import CVSSCalculator from "./cvsscalculator";
 
 interface VulnProps {
   onAddOrUpdateVulnerability: (vulnerability: VulnType) => void;
+  vulns: VulnType[];
+  setVulns: React.Dispatch<React.SetStateAction<VulnType[]>>
 }
 
-export default function Vuln({ onAddOrUpdateVulnerability }: VulnProps) {
+export default function Vuln({ onAddOrUpdateVulnerability, vulns, setVulns }: VulnProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
   const [vulnerabilidades, setVulnerabilidades] = React.useState(
@@ -93,6 +99,7 @@ export default function Vuln({ onAddOrUpdateVulnerability }: VulnProps) {
     onAddOrUpdateVulnerability(vulnerability);
 
     // Limpa os campos após salvar
+    setValue("")
     setNome("");
     setDescVuln("");
     setAtivos("");
@@ -240,24 +247,48 @@ export default function Vuln({ onAddOrUpdateVulnerability }: VulnProps) {
                 onChange={(e) => setPoc(e.target.value)}
               />
             </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="severidade">Severidade</Label>
-              <Select value={severidade} onValueChange={setSeveridade}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione a severidade" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Critical">Critical</SelectItem>
-                  <SelectItem value="High">High</SelectItem>
-                  <SelectItem value="Medium">Medium</SelectItem>
-                  <SelectItem value="Low">Low</SelectItem>
-                  <SelectItem value="Info">Info</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <CVSSCalculator />
             <Button onClick={saveVulnerability}>Salvar Vulnerabilidade</Button>
           </form>
         )}
+        {/* Lista de Vulnerabilidades Adicionadas */}
+
+        <Table className="mt-6">
+          <TableHead className="w-[100px] text-center">#</TableHead>
+          <TableHead>Vulnerabilidades</TableHead>
+          <TableHead>Risco</TableHead>
+          <TableBody>
+            {vulns.length > 0 ? (
+              vulns.map((vuln, index) => (
+                <TableRow key={vuln.id}>
+                  <TableCell className="text-center font-medium">
+                    {String(index + 1).padStart(2, "0")}
+                  </TableCell>
+                  <TableCell>{vuln.nome}</TableCell>
+                  <TableCell>{vuln.severidade}</TableCell>
+                  <TableCell className="text-center">
+                    <Button
+                      onClick={() => {
+                        setVulns(vulns.filter((v) => v.id !== vuln.id));
+                      }}
+                      variant="destructive"
+                      size="sm"
+                      className="ml-7"
+                    >
+                      <FaRegTrashAlt />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={2} className="text-center">
+                  Nenhuma vulnerabilidade adicionada.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </CardContent>
     </>
   );

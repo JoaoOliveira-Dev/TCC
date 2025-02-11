@@ -23,6 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from "src/components/ui/table";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 interface ScopeProps {
   alvos: Alvo[];
@@ -88,13 +89,13 @@ export default function Scope({ alvos, setAlvos }: ScopeProps) {
                 <TableCell>{alvo.link}</TableCell>
                 <TableCell className="text-center">
                   <Button
-                    variant="outline"
+                    variant="destructive"
                     size="sm"
                     onClick={() =>
                       setAlvos(alvos.filter((item) => item.id !== alvo.id))
                     }
                   >
-                    Remover
+                    <FaRegTrashAlt />
                   </Button>
                 </TableCell>
               </TableRow>
