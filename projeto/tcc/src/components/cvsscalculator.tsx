@@ -8,6 +8,8 @@ import {
 import { Label } from "src/components/ui/label";
 import { Button } from "src/components/ui/button";
 
+import { CVSSCalculatorProps } from "../types/types"
+
 // Definição dos tipos para os pesos
 interface Weights {
   AV: { N: number; A: number; L: number; P: number };
@@ -24,7 +26,7 @@ interface Weights {
 }
 
 // Função principal para calcular a pontuação CVSS
-function CVSSCalculator() {
+function CVSSCalculator({ onCalculate }: CVSSCalculatorProps) {
   // Variáveis para armazenar os valores selecionados
   let version: "3.0" | "3.1" = "3.1";
   let attackVector: "N" | "A" | "L" | "P" = "N";
@@ -88,8 +90,23 @@ function CVSSCalculator() {
     // Round up to one decimal place
     const finalScore = Math.ceil(baseScore * 10) / 10;
 
+    // Chama a função passada pelo componente pai com os dados calculados
+    onCalculate({
+      attackVector,
+      attackComplexity,
+      privilegesRequired,
+      userInteraction,
+      scope,
+      confidentialityImpact,
+      integrityImpact,
+      availabilityImpact,
+      score: finalScore,
+    });
+
     // Exibe o resultado no alerta
-    alert(`CVSS Score AC:${attackVector}/AV:${attackComplexity}/PR:${privilegesRequired}/UI:${userInteraction}/SC:${scope}/${confidentialityImpact}/${integrityImpact}/${availabilityImpact}: ${finalScore}`);
+    console.log(
+      `CVSS Score AV:${attackVector}/AC:${attackComplexity}/PR:${privilegesRequired}/UI:${userInteraction}/S:${scope}/C:${confidentialityImpact}/I:${integrityImpact}/A:${availabilityImpact}: ${finalScore}`
+    );
   }
 
   // Função para atualizar os valores dos campos
@@ -127,9 +144,8 @@ function CVSSCalculator() {
     }
   }
 
-  // Renderização do formulário
   return (
-    <div >
+    <div>
       <h1 className="text-2xl font-bold mb-4">Calculadora de CVSS</h1>
 
       {/* Seleção da Versão */}
@@ -260,12 +276,15 @@ function CVSSCalculator() {
             </Select>
           </div>
         </div>
-      </div>
+        <div className="grid grid-cols-1 gap-4">
 
       {/* Botão de Cálculo */}
       <Button onClick={calculateScore} className="mt-6">
-        Calcular Pontuação
+        Salvar
       </Button>
+        </div>
+      </div>
+
     </div>
   );
 }

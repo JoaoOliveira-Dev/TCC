@@ -45,7 +45,7 @@ import CVSSCalculator from "./cvsscalculator";
 interface VulnProps {
   onAddOrUpdateVulnerability: (vulnerability: VulnType) => void;
   vulns: VulnType[];
-  setVulns: React.Dispatch<React.SetStateAction<VulnType[]>>
+  setVulns: React.Dispatch<React.SetStateAction<VulnType[]>>;
 }
 
 export default function Vuln({ onAddOrUpdateVulnerability, vulns, setVulns }: VulnProps) {
@@ -64,7 +64,54 @@ export default function Vuln({ onAddOrUpdateVulnerability, vulns, setVulns }: Vu
   const [reparo, setReparo] = React.useState("");
   const [poc, setPoc] = React.useState("");
   const [severidade, setSeveridade] = React.useState("Low");
+
   const [novaVuln, setNovaVuln] = React.useState("");
+
+    // Função para lidar com os dados recebidos do CVSSCalculator
+    const handleCVSSCalculation = (cvssData: {
+      attackVector: string;
+      attackComplexity: string;
+      privilegesRequired: string;
+      userInteraction: string;
+      scope: string;
+      confidentialityImpact: string;
+      integrityImpact: string;
+      availabilityImpact: string;
+      score: number;
+    }) => {
+      const severity = getSeverityFromScore(cvssData.score);
+      const vulnerability: VulnType = {
+        id: crypto.randomUUID(),
+        nome,
+        descVuln,
+        ativos,
+        referencia,
+        impacto,
+        reparo,
+        poc,
+        severidade: severity,
+        cvssData,
+      };
+      onAddOrUpdateVulnerability(vulnerability);
+  
+      // Limpa os campos após salvar
+      setValue("")
+      setNome("");
+      setDescVuln("");
+      setAtivos("");
+      setReferencia("");
+      setImpacto("");
+      setReparo("");
+      setPoc("");
+    };
+  
+    // Função para determinar a severidade com base na pontuação CVSS
+    const getSeverityFromScore = (score: number): string => {
+      if (score >= 9.0) return "Critical";
+      if (score >= 7.0) return "High";
+      if (score >= 4.0) return "Medium";
+      return "Low";
+    };
 
   // Função para adicionar uma nova vulnerabilidade à lista
   const adicionarNovaVuln = () => {
@@ -78,36 +125,6 @@ export default function Vuln({ onAddOrUpdateVulnerability, vulns, setVulns }: Vu
       setNovaVuln("");
       setOpen(false);
     }
-  };
-
-  // Função para salvar a vulnerabilidade atual
-  const saveVulnerability = (event: any) => {
-    //faça como que a página não recarregue
-    event.preventDefault();
-
-    const vulnerability: VulnType = {
-      id: uuidv4(),
-      nome,
-      descVuln,
-      ativos,
-      referencia,
-      impacto,
-      reparo,
-      poc,
-      severidade,
-    };
-    onAddOrUpdateVulnerability(vulnerability);
-
-    // Limpa os campos após salvar
-    setValue("")
-    setNome("");
-    setDescVuln("");
-    setAtivos("");
-    setReferencia("");
-    setImpacto("");
-    setReparo("");
-    setPoc("");
-    setSeveridade("Low");
   };
 
   return (
@@ -247,8 +264,7 @@ export default function Vuln({ onAddOrUpdateVulnerability, vulns, setVulns }: Vu
                 onChange={(e) => setPoc(e.target.value)}
               />
             </div>
-            <CVSSCalculator />
-            <Button onClick={saveVulnerability}>Salvar Vulnerabilidade</Button>
+            <CVSSCalculator onCalculate={handleCVSSCalculation} />
           </form>
         )}
         {/* Lista de Vulnerabilidades Adicionadas */}
@@ -290,6 +306,6 @@ export default function Vuln({ onAddOrUpdateVulnerability, vulns, setVulns }: Vu
           </TableBody>
         </Table>
       </CardContent>
-    </>
+    </> 
   );
 }

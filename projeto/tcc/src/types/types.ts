@@ -4,7 +4,7 @@ export interface Alvo {
 }
 
 export interface VulnType {
-  id: string | null; // Pode ser nulo inicialmente
+  id: string;
   nome: string;
   descVuln: string;
   ativos: string;
@@ -13,4 +13,29 @@ export interface VulnType {
   reparo: string;
   poc: string;
   severidade: string;
+  cvssData?: {
+    attackVector: string;
+    attackComplexity: string;
+    privilegesRequired: string;
+    userInteraction: string;
+    scope: string;
+    confidentialityImpact: string;
+    integrityImpact: string;
+    availabilityImpact: string;
+    score: number;
+  };
+}
+
+export interface CVSSCalculatorProps {
+  onCalculate: (data: {
+    attackVector: string;
+    attackComplexity: string;
+    privilegesRequired: string;
+    userInteraction: string;
+    scope: string;
+    confidentialityImpact: string;
+    integrityImpact: string;
+    availabilityImpact: string;
+    score: number;
+  }) => void;
 }

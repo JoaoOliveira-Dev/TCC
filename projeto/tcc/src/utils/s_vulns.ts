@@ -33,35 +33,43 @@ export const styles = StyleSheet.create({
     flex: 1,
     padding: 5,
     fontSize: 10,
+    fontWeight: "bold",
   },
   cell2: {
-    flex: 3,
+    flex: 1,
     padding: 5,
     fontSize: 10,
+    fontWeight: "bold",
   },
   title: {
     fontSize: 14,
     fontWeight: "bold",
     marginTop: 10,
+    marginBottom: 5
   },
   subtitle: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: "bold",
-    color: "#3b82f6",
     marginTop: 5,
+    marginBottom: 5
+  },
+  content: {
+    fontSize: 12,
+    color: "#434343",
+    marginBottom: 30
   },
   headerGravidade: {
     flex: 1,
     padding: 5,
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: "bold",
     color: colors.white,
     backgroundColor: colors.l_blue,
   },
   headerQuantidade: {
-    flex: 3,
+    flex: 1,
     padding: 5,
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: "bold",
     color: colors.white,
     backgroundColor: colors.red,

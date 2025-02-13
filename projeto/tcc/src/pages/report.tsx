@@ -4,22 +4,10 @@ import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import PDFReport from "../components/PDFReport";
 import PDFView from "../components/PDFView";
 
-import { Button } from "src/components/ui/button";
 import Scope from "../components/scope";
 import Vuln from "../components/vuln";
 import { Card } from "src/components/ui/card";
 import { NavBar } from "src/components/navBar";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "src/components/ui/table";
-
-import { FaRegTrashAlt } from "react-icons/fa";
 
 import { Alvo, VulnType } from "../types/types";
 
@@ -43,7 +31,7 @@ export default function Report() {
       // Atualiza a vulnerabilidade existente
       const updatedVulns = [...vulns];
       updatedVulns[existingIndex] = vulnerability;
-      setVulns(updatedVulns);
+      setVulns((prevVulns) => [...prevVulns, vulnerability]);
     } else {
       // Adiciona uma nova vulnerabilidade
       setVulns([...vulns, vulnerability]);
@@ -55,7 +43,7 @@ export default function Report() {
       <NavBar />
       <Card className="p-8 max-w-3xl mx-auto mt-3">
         <Scope alvos={alvos} setAlvos={setAlvos} />
-        <Vuln onAddOrUpdateVulnerability={handleAddOrUpdateVulnerability} vulns={vulns} setVulns={setVulns}/>
+        <Vuln onAddOrUpdateVulnerability={handleAddOrUpdateVulnerability} vulns={vulns} setVulns={setVulns} />
         
         {/* Botões de Ação */}
         <div className="flex justify-between mt-6">

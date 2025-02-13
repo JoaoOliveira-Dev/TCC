@@ -65,7 +65,7 @@ const VulnTable = ({ vulns }: VulnTableProps) => (
   <View>
     {vulns.map((vuln, index) => (
       <View key={vuln.id || index} style={styles.table}>
-        <Text style={{ fontSize: 12, marginBottom: 10 }}>
+        <Text style={{ fontSize: 16, marginBottom: 10 }}>
           Vulnerabilidades Externas
         </Text>
         <Text style={styles.title}>
@@ -81,27 +81,27 @@ const VulnTable = ({ vulns }: VulnTableProps) => (
         </View>
         <View key="" style={styles.rows}>
           <Text style={styles.cell1}>CVSS Points</Text>
-          <Text style={styles.cell2}>9.8</Text>
+          <Text style={styles.cell2}>{vuln.cvssData?.score}</Text>
         </View>
         <View key="" style={styles.rows}>
           <Text style={styles.cell1}>Vetores</Text>
           <Text style={styles.cell2}>
-            CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+            CVSS:3.1/AV:{vuln.cvssData?.attackVector}/AC:{vuln.cvssData?.attackComplexity}/PR:{vuln.cvssData?.privilegesRequired}/UI:{vuln.cvssData?.userInteraction}/S:{vuln.cvssData?.scope}/C:{vuln.cvssData?.confidentialityImpact}/I:{vuln.cvssData?.integrityImpact}/A:{vuln.cvssData?.availabilityImpact}
           </Text>
         </View>
 
         <Text style={styles.subtitle}>Descrição da Vulnerabilidade:</Text>
-        <Text>{vuln.descVuln}</Text>
+        <Text style={styles.content}>{vuln.descVuln}</Text>
         <Text style={styles.subtitle}>Ativo Afetado:</Text>
-        <Text>{vuln.ativos}</Text>
+        <Text style={styles.content}>{vuln.ativos}</Text>
         <Text style={styles.subtitle}>Referência:</Text>
-        <Text>{vuln.referencia}</Text>
+        <Text style={styles.content}>{vuln.referencia}</Text>
         <Text style={styles.subtitle}>Impacto:</Text>
-        <Text>{vuln.impacto}</Text>
+        <Text style={styles.content}>{vuln.impacto}</Text>
         <Text style={styles.subtitle}>Ação para Reparo:</Text>
-        <Text>{vuln.reparo}</Text>
+        <Text style={styles.content}>{vuln.reparo}</Text>
         <Text style={styles.subtitle}>Proof Of Concept:</Text>
-        <Text>{vuln.poc}</Text>
+        <Text style={styles.content}>{vuln.poc}</Text>
       </View>
     ))}
   </View>
